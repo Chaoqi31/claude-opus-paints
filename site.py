@@ -25,11 +25,11 @@ from atelier.plate import BACKDROP
 from render import FRONT, PAPER, ROOMS, ROOT, SCROLL, hanging, rooms, even_rows, strapline, tally
 
 SITE = ROOT / "site"
-URL = "https://chaoqi31.github.io/claude-glass/"  # where GitHub Pages serves it; social cards need absolute links
-REPO = "https://github.com/Chaoqi31/claude-glass"
+URL = "https://chaoqi31.github.io/claude-opus-paints/"  # where GitHub Pages serves it; social cards need absolute links
+REPO = "https://github.com/Chaoqi31/claude-opus-paints"
 ACCENT = "#c8402e"  # vermilion: the museum's one accent
 ICON = "rose_window"  # a round window, cut out for the browser tab
-POSTER = 22.6  # seconds into the film: The Starry Night as its own program, the painting and the code both legible
+POSTER = 22.6  # seconds into the film: Lake Ashi as its own program, the painting and the code both legible
 NUMERALS = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"]
 REGIONS = ["Africa", "West Asia", "South Asia", "East Asia", "Southeast Asia", "Europe", "Americas", "Oceania"]
 e = html.escape

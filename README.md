@@ -1,12 +1,16 @@
-# The Claude Glass
+<h1>Claude Opus 5.5 paints</h1>
 
-<p align="center"><a href="https://chaoqi31.github.io/claude-glass/"><img src="site/thumbs/_wall.jpg" alt="Sixty paintings by Claude, hung on one wall" width="100%"></a></p>
+<p><b>Claude Opus 5.5 has never held a brush, so it wrote one. Every painting here is a Python program it wrote, and every pixel is computed.</b></p>
 
-<p align="center"><a href="https://chaoqi31.github.io/claude-glass/"><b>Walk through the museum</b></a> · <a href="https://chaoqi31.github.io/claude-glass/#film">Watch the film</a> · <a href="#colophon">Paint it yourself</a></p>
+<p align="center"><a href="https://chaoqi31.github.io/claude-opus-paints/"><img src="site/thumbs/_wall.jpg" alt="Every painting by Claude Opus 5.5, hung on one wall" width="100%"></a></p>
+
+<p align="center"><a href="https://chaoqi31.github.io/claude-opus-paints/"><b>Walk through the museum</b></a> · <a href="https://chaoqi31.github.io/claude-opus-paints/#film">Watch the film</a> · <a href="#colophon">Paint it yourself</a></p>
 
 <p align="center"><sub>60 paintings · 38,564 lines of Python · no image models, no photographs</sub></p>
 
-*One painter, many hands: paintings by Claude, made in code.*
+# The Claude Glass
+
+*One painter, many hands: paintings by Claude Opus 5.5, made in code.*
 
 In the eighteenth century, painters and travellers carried a small, dark, slightly convex mirror called a Claude glass. They turned their backs on the view and studied it in the glass instead, where it came back framed, quieter, and a little golden, like a painting by Claude Lorrain.
 
@@ -16,7 +20,7 @@ Every work here is a program. There are no image models, no photographs, no scan
 
 The works are by Claude (Opus 5.5). The museum was founded by [Chaoqi](https://github.com/Chaoqi31).
 
-[The film](https://chaoqi31.github.io/claude-glass/#film) is a minute of Claude Opus 5.5 at work: it writes a brush in Python and paints with it, stroke by stroke; a painting is seen as its own program, and one pixel as the three numbers it is. Its music is written and played in code, like the paintings.
+[The film](https://chaoqi31.github.io/claude-opus-paints/#film) is a minute of Claude Opus 5.5 at work: it writes a brush in Python and paints with it, stroke by stroke; a painting is seen as its own program, and one pixel as the three numbers it is. Its music is written and played in code, like the paintings.
 
 ---
 
@@ -119,10 +123,10 @@ The works are by Claude (Opus 5.5). The museum was founded by [Chaoqi](https://g
 
 ## Colophon
 
-Every plate in this museum can be made again from [its source](https://github.com/Chaoqi31/claude-glass), on any computer, in a minute or two. It needs [uv](https://docs.astral.sh/uv/), which brings Python and the three libraries the museum is made with, and ffmpeg for the film.
+Every plate in this museum can be made again from [its source](https://github.com/Chaoqi31/claude-opus-paints), on any computer, in a minute or two. It needs [uv](https://docs.astral.sh/uv/), which brings Python and the three libraries the museum is made with, and ffmpeg for the film.
 
 ```bash
-git clone --depth 1 https://github.com/Chaoqi31/claude-glass && cd claude-glass
+git clone --depth 1 https://github.com/Chaoqi31/claude-opus-paints && cd claude-opus-paints
 uv run render.py giverny     # paint one work into plates/
 uv run render.py             # paint them all
 uv run site.py               # hang them: the wall, the README and the website

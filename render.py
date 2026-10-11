@@ -38,7 +38,7 @@ def words(n):
 
 def strapline(slugs):
     """The museum in a line, under its name on its first page."""
-    return f"{words(len(slugs)).capitalize()} paintings by Claude, each one a program"
+    return f"{words(len(slugs)).capitalize()} paintings by Claude Opus 5.5, each one a program"
 
 
 def works():

@@ -3,15 +3,14 @@ composed and played in code.
 
     uv run timeline.py      writes plates/_timeline.mp4 (1920 x 1080, 30 fps, H.264 with AAC)
 
-Two lines come up in the dark: Claude Opus 5.5 has never held a brush. So it wrote one, and the code comes up as
-it was written. A bare canvas takes its first strokes, one on each note of the voice, then hundreds, then
-thousands, until the olive grove stands finished. Another painting is seen as its own program: its code, set small
-and each letter tinted with the colour of the painting where it falls, draws back until the painting is there, and
-the code gives way to it. The camera goes into a third, nearer and nearer, until one pixel fills the screen with
-its value. Four things the paintings were not made with come up on four blows of brass; then the paintings go by
-on the notes of the figure, and every work in the museum comes onto one wall, each out of its program in its own
-place, faster and faster, until the music breaks off. The wall stands whole in the silence, and the title falls
-with the drum.
+Two lines come up in the dark: Claude Opus 5.5 has never held a brush. So it wrote one, and the code comes up as it
+was written. A bare canvas takes its first strokes, one on each note of the voice, then hundreds, then thousands,
+until the almond tree stands in blossom. Another painting is seen as its own program: its code, set small and each
+letter tinted with the colour of the painting where it falls, draws back until the painting is there, and the code
+gives way to it. The camera goes into a third, nearer and nearer, until one pixel fills the screen with its value.
+Four things the paintings were not made with come up on four blows of brass; then the paintings go by on the notes
+of the figure, and every work in the museum comes onto one wall, each out of its program in its own place, faster
+and faster, until the music breaks off. The wall stands whole in the silence, and the title falls with the drum.
 
 The plates are shown as they are, in their own colours. numpy and PIL draw each frame and ffmpeg encodes the frames
 with the music. The type is Iowan Old Style and SF Mono, from macOS.
@@ -27,9 +26,10 @@ from pathlib import Path
 
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
+from scipy import ndimage
 
 import score
-from atelier import impasto, music, noise
+from atelier import dabs, impasto, music, noise
 from atelier.color import to_srgb
 from render import ROOT, even_rows, hanging, words
 
@@ -55,18 +55,19 @@ OPENING = ("Claude Opus 5.5", "has never held a brush.")
 WROTE = "So it wrote one."
 SOURCE = ("atelier/impasto.py", 21)       # the code written on the screen: its first lines
 PHRASE = "laid stroke by stroke from a loaded brush."              # lit when it has been written
-PAINTED = "saint_remy"                    # painted stroke by stroke
-FIRST = 4.0                               # how much nearer than the whole canvas's width its first strokes are seen
-WOVEN = "starry"                          # seen as its own program
-CLOSE = ("red_fuji", (791, 824))          # gone into until one pixel fills the screen, and which pixel
+PAINTED = "almond"                        # painted stroke by stroke
+FIRST = 4.0                               # how much nearer than the whole canvas's width its first strokes are seen,
+FIRST_AT = (0.57, 0.95)                   # and where on the canvas they fall, in its fractions
+WOVEN = "hakone"                          # seen as its own program
+CLOSE = ("attersee", (1224, 1643))        # gone into until one pixel fills the screen, and which pixel
 NOT = ("No image model.", "No photograph.", "No tracing.", "Only Python.")   # one on each blow of brass
 # the montage, in sixteenths from its start: four works held half a bar, each coming out of its program; twelve on
 # the notes of the figure, shown as they are, each a little lighter than the last, so that no cut leaps from dark
 # to bright; then from WALL every work comes onto one wall, each out of its program in its own place, faster and
 # faster over WALL_FOR sixteenths, and the wall stays whole through the silence before the title
-MONTAGE = ("hakone", "nice", "impression", "rose_window",
-           "burbank", "attersee", "yatsuhashi", "haystacks", "sayama", "washington",
-           "almond", "javea", "sydney", "collioure", "louveciennes", "turner")
+MONTAGE = ("starry", "nice", "impression", "rose_window",
+           "burbank", "red_fuji", "yatsuhashi", "haystacks", "sayama", "saint_remy",
+           "washington", "javea", "sydney", "collioure", "louveciennes", "turner")
 CUTS = [0, 8, 16, 24] + [32 + s for s in score.RHYTHM] + [48 + s for s in score.RHYTHM]
 SLOW = 8                                  # sixteenths a work is held for it to come out of its program; quicker cuts
                                           # between program and painting would flicker
@@ -224,27 +225,30 @@ def woven(slug, width, size, ground=0.0, at=None):
 
 def snapshots(slug, schedule, width):
     """The painting going on: views of the canvas, `width` px across, as JPEG, after each of the strokes that
-    `schedule(total strokes)` lists. The program runs twice: once to count its strokes, once to look.
-    -> ({stroke: jpeg}, total)"""
+    `schedule(total strokes)` lists, under the lamp its program lights the finished paint with, which sees the
+    surface a hair softer than the brush left it. The program runs twice: once to count its strokes and see its
+    lamp, once to look. -> ({stroke: jpeg}, total)"""
     m = importlib.import_module(f"works.{slug}")
-    lay, seen, out = impasto.lay, [0], {}
+    lay, shine, seen, out, lamp = impasto.lay, dabs.shine, [0], {}, {}
 
     def watch(rgb, height):
         seen[0] += 1
         if seen[0] in look:
-            im = Image.fromarray(np.clip(to_srgb(rgb) * 255 + 0.5, 0, 255).astype(np.uint8))
+            lit = shine(rgb, ndimage.gaussian_filter(height, 0.7), **lamp)
+            im = Image.fromarray(np.clip(to_srgb(lit) * 255 + 0.5, 0, 255).astype(np.uint8))
             buf = io.BytesIO()
             im.resize((width, round(width * rgb.shape[0] / rgb.shape[1])), Image.LANCZOS).save(buf, "JPEG", quality=92)
             out[seen[0]] = buf.getvalue()
     try:
         impasto.lay = lambda *a, **k: lay(*a, watch=lambda rgb, height: seen.__setitem__(0, seen[0] + 1), **k)
+        dabs.shine = lambda rgb, height, **k: lamp.update(k) or shine(rgb, height, **k)
         m.paint()
         total, look = seen[0], set(schedule(seen[0]))
         seen[0] = 0
         impasto.lay = lambda *a, **k: lay(*a, watch=watch, **k)
         m.paint()
     finally:
-        impasto.lay = lay
+        impasto.lay, dabs.shine = lay, shine
     return out, total
 
 
@@ -275,7 +279,7 @@ class Film:
         self.title = [(Type("THE CLAUDE GLASS", 104, track=0.1), 452, 0),
                       (Type(OPENING[0], 34, DIM, track=0.04), 372, 2 * STEP * 4),
                       (Type(f"{n} paintings. Every pixel written in Python.", 34, face=ITALIC), 610, BAR),
-                      (Type("chaoqi31.github.io/claude-glass", 24, DIM, font=MONO), 690, 2 * BAR)]
+                      (Type("chaoqi31.github.io/claude-opus-paints", 24, DIM, font=MONO), 690, 2 * BAR)]
 
     def hang(self, mods):
         """Every work on one wall, whole, oldest first, in rows of even height as large as BOX holds them; each
@@ -330,10 +334,10 @@ class Film:
 
     def strokes(self):
         """The painting painted: the strokes on the screen at each frame, and the canvas after them. On each note
-        of the figure's first two bars the strokes double, one, two, four, up to two thousand; then they come on
-        faster and faster until the painting is done."""
+        of the figure's first two bars, and on the first of the third, the strokes double, one, two, four, up to
+        four thousand; then they come on faster and faster until the painting is done."""
         a, b = PART["strokes"]
-        self.notes = [a + bar * BAR + s * STEP for bar in range(2) for s in score.RHYTHM]
+        self.notes = [a + bar * BAR + s * STEP for bar in range(2) for s in score.RHYTHM] + [a + 2 * BAR]
         first, last = a + 2 * BAR, b - 3 * BAR // 8
         self.count = {}
 
@@ -412,19 +416,18 @@ class Film:
         n = self.count[f]
         x0, y0, x1, y1 = self.box
         fw, fh = x1 - x0, y1 - y0
-        near = W / fw * 1.02                                  # close enough that the canvas fills the frame across,
-        first = 1 - gently(u / BAR)                           # and closer still on the first strokes, at its left
-        back = gently((u - 2 * BAR) / BAR)                    # edge; leaning in a little, then back to the whole
-        z = (near * FIRST ** first * (1 + 0.05 * min(u, 2 * BAR) / (2 * BAR))) ** (1 - back)
+        near, stay = W / fw * 1.02, 2.5 * BAR                 # close enough that the canvas fills the frame across,
+        first = 1 - gently(u / BAR)                           # and closer still on the first strokes, where they
+        back = gently((u - stay) / BAR)                       # fall; leaning in a little, then back to the whole
+        z = (near * FIRST ** first * (1 + 0.05 * min(u, stay) / stay)) ** (1 - back)
         cw, ch = z * fw, z * fh
-        cx = 0.5 - 0.45 * first * (1 - back)                  # the point of the canvas looked at, in its fractions
-        cy = (0.25 * first + 0.32 * (1 - first)) * (1 - back) + 0.5 * back
+        cx, cy = (0.5 + (v - 0.5) * first * (1 - back) for v in FIRST_AT)     # the point of the canvas looked at
         between = lambda v, lo, hi: min(max(v, min(lo, hi)), max(lo, hi))
         left = between(W / 2 - cx * cw, 0, W - cw)            # covering the frame while larger than it, inside
         top = between(H / 2 + ((y0 + y1) / 2 - H / 2) * back - cy * ch, 0, H - ch)      # it once smaller
         rect = (left, top, left + cw, top + ch)
         place(canvas, self.canvas_at(n), *rect)
-        lit = noise.smoothstep(b - 3 * BAR // 8 + 4, b - 6, f)          # the finished painting, lit as on its plate
+        lit = noise.smoothstep(b - 3 * BAR // 8 + 4, b - 6, f)          # the finished painting, as on its plate
         place(canvas, self.lit_plate, *rect, lit)
         label = f"{self.total:,} strokes" if n >= self.total else f"stroke {n:,}" if n == 1 else f"{n:,} strokes"
         t = self.note(label, DIM if back > 0.98 else (72, 66, 58))      # under the canvas, or on it while close

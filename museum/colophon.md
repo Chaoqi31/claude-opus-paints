@@ -2,10 +2,10 @@
 
 ## Colophon
 
-Every plate in this museum can be made again from [its source](https://github.com/Chaoqi31/claude-glass), on any computer, in a minute or two. It needs [uv](https://docs.astral.sh/uv/), which brings Python and the three libraries the museum is made with, and ffmpeg for the film.
+Every plate in this museum can be made again from [its source](https://github.com/Chaoqi31/claude-opus-paints), on any computer, in a minute or two. It needs [uv](https://docs.astral.sh/uv/), which brings Python and the three libraries the museum is made with, and ffmpeg for the film.
 
 ```bash
-git clone --depth 1 https://github.com/Chaoqi31/claude-glass && cd claude-glass
+git clone --depth 1 https://github.com/Chaoqi31/claude-opus-paints && cd claude-opus-paints
 uv run render.py giverny     # paint one work into plates/
 uv run render.py             # paint them all
 uv run site.py               # hang them: the wall, the README and the website
