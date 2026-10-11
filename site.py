@@ -29,7 +29,7 @@ URL = "https://chaoqi31.github.io/claude-opus-paints/"  # where GitHub Pages ser
 REPO = "https://github.com/Chaoqi31/claude-opus-paints"
 ACCENT = "#c8402e"  # vermilion: the museum's one accent
 ICON = "rose_window"  # a round window, cut out for the browser tab
-POSTER = 22.6  # seconds into the film: Lake Ashi as its own program, the painting and the code both legible
+POSTER = 16.95  # seconds into the film: the almond tree with all its strokes laid and lit
 NUMERALS = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"]
 REGIONS = ["Africa", "West Asia", "South Asia", "East Asia", "Southeast Asia", "Europe", "Americas", "Oceania"]
 e = html.escape
@@ -249,20 +249,21 @@ def door(n, name, hung, size):
 
 
 def film():
-    """The film, if it has been made, behind its poster: a painting seen as its own program, the moment the
-    film is most itself. -> HTML"""
-    path = ROOT / "plates" / "_timeline.mp4"
+    """The film, if it has been made, behind its poster: the painting it paints, finished. Both are linked by
+    what is in them, so a browser that kept the last ones fetches these afresh. -> HTML"""
+    path, poster = ROOT / "plates" / "_timeline.mp4", SITE / "thumbs" / "_timeline.avif"
     if not path.exists():
         return ""
     frame = subprocess.run(["ffmpeg", "-v", "error", "-ss", str(POSTER), "-i", str(path), "-frames:v", "1",
                             "-f", "image2pipe", "-vcodec", "png", "-"], capture_output=True, check=True).stdout
-    Image.open(io.BytesIO(frame)).save(SITE / "thumbs" / "_timeline.avif", quality=60)
+    Image.open(io.BytesIO(frame)).save(poster, quality=60)
+    v = {p: hashlib.sha1(p.read_bytes()).hexdigest()[:8] for p in (path, poster)}
     took = float(subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0",
                                  str(path)], capture_output=True, text=True, check=True).stdout)
     mins, secs = divmod(round(took), 60)
     length = f"{mins} min {secs} s" if secs else f"{mins} min"
     return f"""<figure class="screen">
-<video class="film" id="film" src="plates/_timeline.mp4" poster="site/thumbs/_timeline.avif" width="1920" height="1080" preload="none" playsinline></video>
+<video class="film" id="film" src="plates/_timeline.mp4?v={v[path]}" poster="site/thumbs/_timeline.avif?v={v[poster]}" width="1920" height="1080" preload="none" playsinline></video>
 <button type="button" class="play" aria-label="Play the film"></button>
 <figcaption>The film: Claude Opus 5.5 paints in Python · {length}, with sound</figcaption>
 </figure>"""
