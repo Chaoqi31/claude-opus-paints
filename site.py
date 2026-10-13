@@ -25,8 +25,8 @@ from atelier.plate import BACKDROP
 from render import FRONT, PAPER, ROOMS, ROOT, SCROLL, hanging, rooms, even_rows, strapline, tally
 
 SITE = ROOT / "site"
-URL = "https://chaoqi31.github.io/claude-opus-paints/"  # where GitHub Pages serves it; social cards need absolute links
-REPO = "https://github.com/Chaoqi31/claude-opus-paints"
+URL = "https://chaoqi31.github.io/opus-paints/"  # where GitHub Pages serves it; social cards need absolute links
+REPO = "https://github.com/Chaoqi31/opus-paints"
 ACCENT = "#c8402e"  # vermilion: the museum's one accent
 ICON = "rose_window"  # a round window, cut out for the browser tab
 POSTER = 16.95  # seconds into the film: the almond tree with all its strokes laid and lit

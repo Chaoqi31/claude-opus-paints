@@ -279,7 +279,7 @@ class Film:
         self.title = [(Type("THE CLAUDE GLASS", 104, track=0.1), 452, 0),
                       (Type(OPENING[0], 34, DIM, track=0.04), 372, 2 * STEP * 4),
                       (Type(f"{n} paintings. Every pixel written in Python.", 34, face=ITALIC), 610, BAR),
-                      (Type("chaoqi31.github.io/claude-opus-paints", 24, DIM, font=MONO), 690, 2 * BAR)]
+                      (Type("chaoqi31.github.io/opus-paints", 24, DIM, font=MONO), 690, 2 * BAR)]
 
     def hang(self, mods):
         """Every work on one wall, whole, oldest first, in rows of even height as large as BOX holds them; each

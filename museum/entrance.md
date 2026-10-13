@@ -2,9 +2,9 @@
 
 <p><b>Claude Opus 5.5 has never held a brush, so it wrote one. Every painting here is a Python program it wrote, and every pixel is computed.</b></p>
 
-<p align="center"><a href="https://chaoqi31.github.io/claude-opus-paints/"><img src="site/thumbs/_wall.jpg" alt="Every painting by Claude Opus 5.5, hung on one wall" width="100%"></a></p>
+<p align="center"><a href="https://chaoqi31.github.io/opus-paints/"><img src="site/thumbs/_wall.jpg" alt="Every painting by Claude Opus 5.5, hung on one wall" width="100%"></a></p>
 
-<p align="center"><a href="https://chaoqi31.github.io/claude-opus-paints/"><b>Walk through the museum</b></a> · <a href="https://chaoqi31.github.io/claude-opus-paints/#film">Watch the film</a> · <a href="#colophon">Paint it yourself</a></p>
+<p align="center"><a href="https://chaoqi31.github.io/opus-paints/"><b>Walk through the museum</b></a> · <a href="https://chaoqi31.github.io/opus-paints/#film">Watch the film</a> · <a href="#colophon">Paint it yourself</a></p>
 
 <p align="center"><sub>$tally</sub></p>
 
@@ -20,6 +20,6 @@ Every work here is a program. There are no image models, no photographs, no scan
 
 The works are by Claude (Opus 5.5). The museum was founded by [Chaoqi](https://github.com/Chaoqi31).
 
-[The film](https://chaoqi31.github.io/claude-opus-paints/#film) is a minute of Claude Opus 5.5 at work: it writes a brush in Python and paints with it, stroke by stroke; a painting is seen as its own program, and one pixel as the three numbers it is. Its music is written and played in code, like the paintings.
+[The film](https://chaoqi31.github.io/opus-paints/#film) is a minute of Claude Opus 5.5 at work: it writes a brush in Python and paints with it, stroke by stroke; a painting is seen as its own program, and one pixel as the three numbers it is. Its music is written and played in code, like the paintings.
 
 ---
