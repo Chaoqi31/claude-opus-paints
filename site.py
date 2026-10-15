@@ -28,7 +28,7 @@ SITE = ROOT / "site"
 URL = "https://chaoqi31.github.io/opus-paints/"  # where GitHub Pages serves it; social cards need absolute links
 REPO = "https://github.com/Chaoqi31/opus-paints"
 ACCENT = "#c8402e"  # vermilion: the museum's one accent
-ICON = "rose_window"  # a round window, cut out for the browser tab
+ICON = ("nice", (60, 825, 1030, 1795))  # the browser tab's icon: a square of The Sea Garden, its white coral on blue
 POSTER = 16.95  # seconds into the film: the almond tree with all its strokes laid and lit
 NUMERALS = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X", "XI", "XII"]
 REGIONS = ["Africa", "West Asia", "South Asia", "East Asia", "Southeast Asia", "Europe", "Americas", "Oceania"]
@@ -121,15 +121,20 @@ def thumb(name):
 
 
 def icon():
-    """The icon on the browser tab: the middle of the round window, cut out round."""
-    with Image.open(ROOT / "plates" / f"{ICON}.jpg") as im:
-        d = min(im.size)
-        im = im.convert("RGB").crop(((im.width - d) // 2, (im.height - d) // 2, (im.width + d) // 2,
-                                     (im.height + d) // 2)).resize((180, 180), Image.LANCZOS)
-    cut = Image.new("L", (720, 720))
-    ImageDraw.Draw(cut).ellipse((6, 6, 714, 714), fill=255)
-    im.putalpha(cut.resize((180, 180), Image.LANCZOS))
-    im.save(SITE / "icon.png", optimize=True)
+    """The icon on the browser tab, a square of a work with its corners rounded, and the one for a phone's home
+    screen, square and opaque, because the phone rounds it and would fill anything transparent with black.
+    -> their hrefs, the tab's first"""
+    slug, box = ICON
+    with Image.open(ROOT / "plates" / f"{slug}.jpg") as im:
+        square = im.convert("RGB").crop(box)
+    tab_path, touch_path = SITE / "icon.png", SITE / "touch.png"
+    square.resize((180, 180), Image.LANCZOS).save(touch_path, optimize=True)
+    mask = Image.new("L", (256, 256))
+    ImageDraw.Draw(mask).rounded_rectangle((0, 0, 255, 255), radius=51, fill=255)
+    small = square.resize((64, 64), Image.LANCZOS)
+    small.putalpha(mask.resize((64, 64), Image.LANCZOS))
+    small.save(tab_path, optimize=True)
+    return [f"site/{p.name}?v={hashlib.sha1(p.read_bytes()).hexdigest()[:8]}" for p in (tab_path, touch_path)]
 
 
 def hero():
@@ -335,7 +340,7 @@ def build(slugs):
     css = Template(CSS).substitute(dict(zip(("wall", "ink", "dim"), colours(PAPER))), accent=ACCENT)
     (SITE / "museum.css").write_text(css)
     (SITE / "museum.js").write_text(JS)
-    icon()
+    tab, touch = icon()
     # a changed stylesheet or script gets a new URL, so no browser pairs new HTML with an old cached copy
     v = {k: hashlib.sha1(s.encode()).hexdigest()[:8] for k, s in (("css", css), ("js", JS))}
     title, subtitle, *text = markdown("entrance.md")
@@ -360,8 +365,8 @@ def build(slugs):
 <meta property="og:description" content="{plain(subtitle)}">
 <meta property="og:image" content="{URL}site/card.jpg">
 <meta name="twitter:card" content="summary_large_image">
-<link rel="icon" href="site/icon.png">
-<link rel="apple-touch-icon" href="site/icon.png">
+<link rel="icon" href="{tab}" sizes="64x64">
+<link rel="apple-touch-icon" href="{touch}">
 <link rel="stylesheet" href="site/museum.css?v={v['css']}">
 <script src="site/museum.js?v={v['js']}" defer></script>
 </head>
